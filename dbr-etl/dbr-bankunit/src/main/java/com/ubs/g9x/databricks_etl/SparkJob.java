@@ -6,20 +6,19 @@ import java.util.List;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.ubs.g9x.common.SparkSessionCreator;
 
 @Component
 public class SparkJob {
 
-    @Value("${spark.master}")
-    private String sparkMaster;
+    @Autowired
+    private SparkSessionCreator sparkSessionCreator;
 
     public void runSparkJob() {
-        SparkSession spark = SparkSession.builder()
-                .appName("Hello World Spark")
-                .master(sparkMaster)  // Use the configured Spark master
-                .getOrCreate();
+        SparkSession spark = sparkSessionCreator.createSparkSession();
     
         try (JavaSparkContext sc = new JavaSparkContext(spark.sparkContext())) {
             List<String> data = Arrays.asList("Test", "Spark", "Job");
